@@ -440,63 +440,66 @@
     top:50%;
     transform:translate(-50%,-50%);
     background:#fff;
-    padding:30px;
+    padding:clamp(15px, 4vw, 30px);
     border-radius:10px;
     box-shadow:0 4px 20px rgba(0,0,0,0.3);
     z-index:1000;
-    min-width:600px;
+    width:90%;
+    max-width:600px;
+    max-height:90vh;
+    overflow-y:auto;
 ">
-    <h2 style="margin:0 0 20px 0; color:#20c997; text-align:center;">🥗 健康搭配推荐</h2>
+    <h2 style="margin:0 0 20px 0; color:#20c997; text-align:center; font-size:clamp(18px, 5vw, 24px);">🥗 健康搭配推荐</h2>
 
-    <div style="display:flex; gap:15px; margin-bottom:20px;">
+    <div style="display:flex; gap:15px; margin-bottom:20px; flex-direction:column;">
         <!-- 荤菜 -->
-        <div style="flex:1; background:#fff5f5; padding:20px; border-radius:8px; border:2px solid #ff6b6b;">
-            <h3 style="margin:0 0 15px 0; color:#ff6b6b; text-align:center;">🍖 荤菜</h3>
+        <div style="flex:1; background:#fff5f5; padding:clamp(12px, 3vw, 20px); border-radius:8px; border:2px solid #ff6b6b;">
+            <h3 style="margin:0 0 15px 0; color:#ff6b6b; text-align:center; font-size:clamp(16px, 4vw, 20px);">🍖 荤菜</h3>
             <div style="margin-bottom:15px;">
-                <span style="color:#999; font-size:13px;">菜名</span>
-                <div style="font-size:20px; font-weight:bold; color:#333; margin-top:5px;" id="foodName1">加载中...</div>
+                <span style="color:#999; font-size:clamp(11px, 3vw, 13px);">菜名</span>
+                <div style="font-size:clamp(16px, 4.5vw, 20px); font-weight:bold; color:#333; margin-top:5px;" id="foodName1">加载中...</div>
             </div>
             <div style="border-top:1px solid #ffe0e0; padding-top:15px;">
                 <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:13px;">🥘 食材：</span>
-                    <span id="foodMaterial1" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🥘 食材：</span>
+                    <span id="foodMaterial1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
                 <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:13px;">🍖 类型：</span>
-                    <span id="foodKind1" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🍖 类型：</span>
+                    <span id="foodKind1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
                 <div>
-                    <span style="color:#666; font-size:13px;">📍 场景：</span>
-                    <span id="foodSituation1" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">📍 场景：</span>
+                    <span id="foodSituation1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
             </div>
         </div>
 
         <!-- 素菜 -->
-        <div style="flex:1; background:#f0fdf4; padding:20px; border-radius:8px; border:2px solid #20c997;">
-            <h3 style="margin:0 0 15px 0; color:#20c997; text-align:center;">🥬 素菜</h3>
+        <div style="flex:1; background:#f0fdf4; padding:clamp(12px, 3vw, 20px); border-radius:8px; border:2px solid #20c997;">
+            <h3 style="margin:0 0 15px 0; color:#20c997; text-align:center; font-size:clamp(16px, 4vw, 20px);">🥬 素菜</h3>
             <div style="margin-bottom:15px;">
-                <span style="color:#999; font-size:13px;">菜名</span>
-                <div style="font-size:20px; font-weight:bold; color:#333; margin-top:5px;" id="foodName2">加载中...</div>
+                <span style="color:#999; font-size:clamp(11px, 3vw, 13px);">菜名</span>
+                <div style="font-size:clamp(16px, 4.5vw, 20px); font-weight:bold; color:#333; margin-top:5px;" id="foodName2">加载中...</div>
             </div>
             <div style="border-top:1px solid #d1fae5; padding-top:15px;">
                 <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:13px;">🥘 食材：</span>
-                    <span id="foodMaterial2" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🥘 食材：</span>
+                    <span id="foodMaterial2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
                 <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:13px;">🍖 类型：</span>
-                    <span id="foodKind2" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🍖 类型：</span>
+                    <span id="foodKind2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
                 <div>
-                    <span style="color:#666; font-size:13px;">📍 场景：</span>
-                    <span id="foodSituation2" style="color:#333; font-size:13px;">-</span>
+                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">📍 场景：</span>
+                    <span id="foodSituation2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div style="display:flex; gap:10px; justify-content:center;">
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
         <button type="button" onclick="confirmDailyChoice()" style="padding:10px 20px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">✓ 确定</button>
         <button type="button" onclick="dailyPick()" style="padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">🔄 重选</button>
         <button type="button" onclick="closeDailyResultModal()" style="padding:10px 20px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer;">✕ 取消</button>
