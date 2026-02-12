@@ -1,8 +1,5 @@
 # 第一階段：編譯 Java 代碼
-FROM openjdk:11-jdk-slim AS builder
-
-# 安裝必要的工具
-RUN apt-get update && apt-get install -y findutils
+FROM tomcat:9.0-jdk11 AS builder
 
 # 設置工作目錄
 WORKDIR /app
@@ -15,13 +12,9 @@ COPY src/main/webapp/WEB-INF/lib ./lib
 RUN mkdir -p build/classes
 
 # 編譯 Java 源文件
-# 首先找到所有 .java 文件並編譯
 RUN find src/main/java -name "*.java" > sources.txt && \
     javac -d build/classes \
-    -cp "lib/*:/usr/local/tomcat/lib/servlet-api.jar" \
-    @sources.txt || \
-    javac -d build/classes \
-    -cp "lib/*" \
+    -cp "lib/*:$CATALINA_HOME/lib/servlet-api.jar" \
     @sources.txt
 
 # 第二階段：構建最終鏡像
