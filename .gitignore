@@ -1,0 +1,24 @@
+# Eclipse 項目文件
+.classpath
+.project
+.settings/
+
+# 編譯輸出
+build/
+target/
+*.class
+
+# 日誌文件
+*.log
+
+# 操作系統文件
+.DS_Store
+Thumbs.db
+
+# IDE 文件
+.idea/
+*.iml
+*.iws
+
+# Claude 配置
+.claude/
