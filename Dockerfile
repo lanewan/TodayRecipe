@@ -14,7 +14,7 @@ RUN mkdir -p build/classes
 # 編譯 Java 源文件
 RUN find src/main/java -name "*.java" > sources.txt && \
     javac -d build/classes \
-    -cp "lib/*:$CATALINA_HOME/lib/servlet-api.jar" \
+    -cp "lib/*:/usr/local/tomcat/lib/servlet-api.jar" \
     @sources.txt
 
 # 第二階段：構建最終鏡像
