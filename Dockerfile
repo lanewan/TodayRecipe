@@ -1,5 +1,5 @@
 # 第一階段：編譯 Java 代碼
-FROM tomcat:9.0-jdk11 AS builder
+FROM tomcat:10-jdk11 AS builder
 
 # 設置工作目錄
 WORKDIR /app
@@ -18,7 +18,7 @@ RUN find src/main/java -name "*.java" > sources.txt && \
     @sources.txt
 
 # 第二階段：構建最終鏡像
-FROM tomcat:9.0-jdk11
+FROM tomcat:10-jdk11
 
 # 刪除 Tomcat 默認的 ROOT 應用
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
