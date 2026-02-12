@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>今天吃什么？</title>
 <style>
     body {
@@ -13,30 +14,43 @@
         background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
     }
 
+    /* 標題 */
+    .page-title {
+        font-size: clamp(32px, 8vw, 48px);
+        font-weight: bold;
+        color: #333;
+        margin: 20px 0;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
     .container {
         text-align: center;
-        padding: 40px 20px;
+        padding: 20px;
+        width: 100%;
+        max-width: 600px;
     }
 
     /* 主按钮 - 听天由命 */
     .btn-main {
-        width: 200px;
-        height: 200px;
+        width: clamp(180px, 50vw, 200px);
+        height: clamp(180px, 50vw, 200px);
         border-radius: 50%;
         background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
         color: white;
-        font-size: 28px;
+        font-size: clamp(24px, 6vw, 28px);
         font-weight: bold;
         border: none;
         cursor: pointer;
         box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
         transition: all 0.3s ease;
         animation: bounce 2s ease-in-out infinite;
-        margin-bottom: 50px;
+        margin-bottom: 30px;
     }
 
     .btn-main:hover {
@@ -60,16 +74,17 @@
     /* 三个功能按钮 */
     .secondary-buttons {
         display: flex;
-        gap: 20px;
+        gap: clamp(10px, 3vw, 20px);
         justify-content: center;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
     }
 
     .secondary-buttons button {
-        width: 140px;
-        height: 80px;
+        width: clamp(120px, 28vw, 140px);
+        height: clamp(70px, 18vw, 80px);
         border-radius: 20px;
-        font-size: 20px;
+        font-size: clamp(16px, 4.5vw, 20px);
         font-weight: 600;
         border: none;
         cursor: pointer;
@@ -103,12 +118,12 @@
 
     /* 添加食物按钮 */
     .btn-add {
-        width: 120px;
-        height: 45px;
+        width: clamp(110px, 30vw, 120px);
+        height: clamp(40px, 12vw, 45px);
         border-radius: 25px;
         background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
         color: white;
-        font-size: 16px;
+        font-size: clamp(14px, 4vw, 16px);
         border: none;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -171,6 +186,8 @@
 </style>
 </head>
 <body>
+
+<h1 class="page-title">今天吃什麽</h1>
 
 <div class="container">
     <!-- 主按钮 -->
