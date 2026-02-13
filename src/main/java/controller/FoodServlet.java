@@ -7,10 +7,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import data.Data;
 import data.Pick;
 import data.Stock;
+import data.User;
 
 @WebServlet("/food")
 public class FoodServlet extends HttpServlet {
@@ -53,10 +55,21 @@ public class FoodServlet extends HttpServlet {
 		String kind = req.getParameter("kind");
 		String situation = req.getParameter("situation");
 
+		// 從 session 中獲取當前登錄用戶
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			resp.getWriter().write("請先登錄");
+			return;
+		}
+
+		String userid = loginUser.getUserId();
+
 		try {
 			Data service = new Data();
 
-			service.addFood(name, material, kind, situation);
+			service.addFood(name, material, kind, situation, userid);
 
 			resp.sendRedirect("TodayRecipe.jsp");
 		} catch (Exception e) {
@@ -70,11 +83,20 @@ public class FoodServlet extends HttpServlet {
 
 		resp.setContentType("application/json;charset=UTF-8");
 
+		// 從 session 中獲取當前登錄用戶（允許為 null，訪客模式）
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+		String userid = (loginUser != null) ? loginUser.getUserId() : null;
+
 		try {
-			System.out.println("========== 开始随机选择 ==========");
+			if (userid == null) {
+				System.out.println("========== 訪客模式：开始随机选择所有用户的数据 ==========");
+			} else {
+				System.out.println("========== 用户 " + userid + "：开始随机选择 ==========");
+			}
 
 			Pick pick = new Pick();
-			Stock stock = pick.randomPick();
+			Stock stock = pick.randomPick(userid);
 
 			if (stock == null) {
 				System.err.println("ERROR: randomPick() 返回了 null");
@@ -128,12 +150,21 @@ public class FoodServlet extends HttpServlet {
 
 		resp.setContentType("application/json;charset=UTF-8");
 
+		// 從 session 中獲取當前登錄用戶（允許為 null，訪客模式）
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+		String userid = (loginUser != null) ? loginUser.getUserId() : null;
+
 		try {
-			System.out.println("========== 开始健康搭配选择 ==========");
+			if (userid == null) {
+				System.out.println("========== 訪客模式：开始健康搭配选择所有用户的数据 ==========");
+			} else {
+				System.out.println("========== 用户 " + userid + "：开始健康搭配选择 ==========");
+			}
 
 			Pick pick = new Pick();
-			Stock stockMeat = pick.meatPick();
-			Stock stockVeg = pick.vegPick();
+			Stock stockMeat = pick.meatPick(userid);
+			Stock stockVeg = pick.vegPick(userid);
 
 			if (stockMeat == null || stockVeg == null) {
 				System.err.println("ERROR: 未找到足够的食品");
@@ -195,11 +226,20 @@ public class FoodServlet extends HttpServlet {
 
 		resp.setContentType("application/json;charset=UTF-8");
 
+		// 從 session 中獲取當前登錄用戶（允許為 null，訪客模式）
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+		String userid = (loginUser != null) ? loginUser.getUserId() : null;
+
 		try {
-			System.out.println("========== 开始外食选择 ==========");
+			if (userid == null) {
+				System.out.println("========== 訪客模式：开始外食选择所有用户的数据 ==========");
+			} else {
+				System.out.println("========== 用户 " + userid + "：开始外食选择 ==========");
+			}
 
 			Pick pick = new Pick();
-			Stock stock = pick.cruisePick();
+			Stock stock = pick.cruisePick(userid);
 
 			if (stock == null) {
 				System.err.println("ERROR: 未找到足够的食品");
@@ -252,11 +292,20 @@ public class FoodServlet extends HttpServlet {
 		String materialName = req.getParameter("materialName");
 		String situationFlag = req.getParameter("kind");
 
+		// 從 session 中獲取當前登錄用戶（允許為 null，訪客模式）
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+		String userid = (loginUser != null) ? loginUser.getUserId() : null;
+
 		try {
-			System.out.println("========== 根據食材选择 ==========");
+			if (userid == null) {
+				System.out.println("========== 訪客模式：根據食材选择所有用户的数据 ==========");
+			} else {
+				System.out.println("========== 用户 " + userid + "：根據食材选择 ==========");
+			}
 
 			Pick pick = new Pick();
-			Stock stock = pick.materialPick(situationFlag, materialName);
+			Stock stock = pick.materialPick(situationFlag, materialName, userid);
 
 			if (stock == null) {
 				System.err.println("ERROR: 未找到足够的食品");

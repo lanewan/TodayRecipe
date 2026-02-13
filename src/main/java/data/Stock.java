@@ -6,6 +6,15 @@ public class Stock {
 	private String material;
 	private String kind;
 	private String situation;
+	private String userId;
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	public String getKind() {
 		return kind;

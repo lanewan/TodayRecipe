@@ -14,7 +14,7 @@ public class Pick {
 		return food;
 	}
 
-	public Stock randomPick() throws Exception {
+	public Stock randomPick(String userid) throws Exception {
 
 		Data dt = null;
 		try {
@@ -22,12 +22,12 @@ public class Pick {
 			dt = new Data();
 
 			System.out.println("[Pick] 调用 dbSelect()...");
-			List<Stock> all = dt.dbSelect();
+			List<Stock> all = dt.dbSelect(userid);
 
-			System.out.println("[Pick] 获取到 " + (all != null ? all.size() : "null") + " 条数据");
+			System.out.println("[Pick] 获取到用户 " + userid + " 的 " + (all != null ? all.size() : "null") + " 条数据");
 
 			if (all == null || all.isEmpty()) {
-				throw new Exception("Excel 文件中没有食品数据");
+				throw new Exception("没有找到该用户的食品数据");
 			}
 
 			Random random = new Random();
@@ -55,17 +55,17 @@ public class Pick {
 		}
 	}
 
-	public Stock meatPick() throws Exception {
+	public Stock meatPick(String userid) throws Exception {
 
 		Data dt = null;
 		try {
 			System.out.println("[Pick] 开始选择荤菜...");
 			dt = new Data();
 
-			List<Stock> all = dt.dailySelect(1);
+			List<Stock> all = dt.dailySelect(1, userid);
 			List<Stock> meat = new java.util.ArrayList<>();
 
-			System.out.println("[Pick] 从 " + (all != null ? all.size() : "null") + " 条数据中筛选荤菜");
+			System.out.println("[Pick] 从用户 " + userid + " 的 " + (all != null ? all.size() : "null") + " 条数据中筛选荤菜");
 
 			for (Stock i : all) {
 				if (i.getKind().equals("荤")) {
@@ -102,17 +102,17 @@ public class Pick {
 		}
 	}
 
-	public Stock vegPick() throws Exception {
+	public Stock vegPick(String userid) throws Exception {
 
 		Data dt = null;
 		try {
 			System.out.println("[Pick] 开始选择素菜...");
 			dt = new Data();
 
-			List<Stock> all = dt.dailySelect(1);
+			List<Stock> all = dt.dailySelect(1, userid);
 			List<Stock> veg = new java.util.ArrayList<>();
 
-			System.out.println("[Pick] 从 " + (all != null ? all.size() : "null") + " 条数据中筛选素菜");
+			System.out.println("[Pick] 从用户 " + userid + " 的 " + (all != null ? all.size() : "null") + " 条数据中筛选素菜");
 
 			for (Stock i : all) {
 				if (i.getKind().equals("素")) {
@@ -149,17 +149,17 @@ public class Pick {
 		}
 	}
 
-	public Stock cruisePick() throws Exception {
+	public Stock cruisePick(String userid) throws Exception {
 
 		Data dt = null;
 		try {
 			System.out.println("[Pick] 开始选择外食...");
 			dt = new Data();
 
-			List<Stock> all = dt.dbSelect();
+			List<Stock> all = dt.dbSelect(userid);
 			List<Stock> cruise = new java.util.ArrayList<>();
 
-			System.out.println("[Pick] 从 " + (all != null ? all.size() : "null") + " 条数据中筛选荤菜");
+			System.out.println("[Pick] 从用户 " + userid + " 的 " + (all != null ? all.size() : "null") + " 条数据中筛选外食");
 
 			for (Stock i : all) {
 				if (i.getSituation().equals("享受")) {
@@ -196,26 +196,26 @@ public class Pick {
 		}
 	}
 
-	public Stock materialPick(String dailyFlag, String material) throws Exception {
+	public Stock materialPick(String dailyFlag, String material, String userid) throws Exception {
 
 		Data dt = null;
 		try {
 			System.out.println("[Pick] 开始根據食材選擇...");
 			dt = new Data();
 
-			List<Stock> all = dt.materialSelect(dailyFlag, material);
+			List<Stock> all = dt.materialSelect(dailyFlag, material, userid);
 
-			System.out.println("[Pick] 从 " + (all != null ? all.size() : "null") + " 条数据");
+			System.out.println("[Pick] 从用户 " + userid + " 的 " + (all != null ? all.size() : "null") + " 条数据");
 
 			Random random = new Random();
 			int index = random.nextInt(all.size());
 			Stock result = all.get(index);
 
-			System.out.println("[Pick] 选中外食索引 " + index + ": " + result.getName());
+			System.out.println("[Pick] 选中索引 " + index + ": " + result.getName());
 			return result;
 
 		} catch (Exception e) {
-			System.err.println("[Pick] cruisePick 异常: " + e.getMessage());
+			System.err.println("[Pick] materialPick 异常: " + e.getMessage());
 			e.printStackTrace(System.err);
 			throw e; // 重新抛出
 

@@ -217,9 +217,57 @@
     .fade-in {
         animation: fadeIn 0.3s ease-out;
     }
+
+    /* 用戶歡迎信息 */
+    .user-welcome {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        font-size: clamp(14px, 3.5vw, 16px);
+        color: #333;
+        z-index: 100;
+    }
+
+    /* 登錄按鈕樣式 */
+    .btn-login {
+        width: clamp(80px, 22vw, 100px);
+        height: clamp(35px, 10vw, 40px);
+        border-radius: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: clamp(14px, 3.5vw, 16px);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        margin-top: 10px;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
 </style>
 </head>
 <body>
+
+<!-- 用戶歡迎信息 -->
+<% if(loginUser != null){ %>
+    <div class="user-welcome">
+        歡迎，<%= loginUser.getUserId() %> 👋
+        <button onclick="logout()" style="margin-left:10px; padding:5px 15px; background:#ff6b6b; color:white; border:none; border-radius:15px; cursor:pointer; font-size:clamp(12px, 3vw, 14px);">登出</button>
+    </div>
+<% } else { %>
+    <!-- 未登錄用戶提示 -->
+    <div style="background:#fff3cd; color:#856404; padding:12px 20px; border-radius:8px; margin:15px auto; max-width:500px; text-align:center; font-size:clamp(12px, 3vw, 14px); box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+        💡 當前為訪客模式，抽取的是所有用戶的美食庫<br>
+        <span style="font-size:clamp(11px, 2.5vw, 13px); color:#666;">登錄後可以添加和抽取你的專屬美食庫</span>
+    </div>
+<% } %>
 
 <h1 class="page-title">今天吃什麽</h1>
 
@@ -236,9 +284,11 @@
 
     <!-- 添加食物按钮 -->
     <button class="btn-add" onclick="showModal()">+ 添加食物</button>
-    
-     <!-- 登錄按钮 -->
-    <button class="login" onclick="showLogin()">登錄</button>
+
+    <!-- 登錄按钮 -->
+    <% if(loginUser == null){ %>
+        <button class="btn-login" onclick="showLogin()">登錄</button>
+    <% } %>
 </div>
 
 <!-- 添加食物弹窗 -->
@@ -350,22 +400,24 @@
 ">
     <h3 style="margin-top:0; color:#333;">創建你的賬戶</h3>
 
-    <form method="post" action="user>
+    <div id="signupMessage" style="display:none; padding:10px; margin-bottom:15px; border-radius:5px; text-align:center;"></div>
+
+    <form id="signupForm" method="post" action="user" onsubmit="return handleSignup(event);">
         <input type="hidden" name="action" value="signup">
 
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:#666;">用戶名：</label>
-            <input type="text" name="useridCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+            <input type="text" name="useridCreate" id="useridCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
         </div>
 
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:#666;">密碼：</label>
-            <input type="text" name="passwordCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+            <input type="password" name="passwordCreate" id="passwordCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
         </div>
-        
-                <div style="margin-bottom:15px;">
+
+        <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:#666;">確認密碼：</label>
-            <input type="text" name="passwordComfirm" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+            <input type="password" name="passwordConfirm" id="passwordConfirm" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
         </div>
 
        
@@ -428,8 +480,14 @@
     box-shadow:0 4px 20px rgba(0,0,0,0.3);
     z-index:1000;
     min-width:380px;
+    max-width:500px;
 ">
     <h2 style="margin:0 0 20px 0; color:#ff6b6b; text-align:center;">🍽️ 今天吃这个！</h2>
+
+    <!-- 食物圖片 -->
+    <div id="materialFoodImageContainer" style="text-align:center; margin-bottom:20px; display:none;">
+        <img id="materialFoodImage" src="" alt="食物圖片" style="width:100%; max-width:300px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    </div>
 
     <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin-bottom:20px;">
         <div style="margin-bottom:15px;">
@@ -474,8 +532,14 @@
     box-shadow:0 4px 20px rgba(0,0,0,0.3);
     z-index:1000;
     min-width:380px;
+    max-width:500px;
 ">
     <h2 style="margin:0 0 20px 0; color:#ff6b6b; text-align:center;">🍽️ 今天吃这个！</h2>
+
+    <!-- 食物圖片 -->
+    <div id="foodImageContainer" style="text-align:center; margin-bottom:20px; display:none;">
+        <img id="foodImage" src="" alt="食物圖片" style="width:100%; max-width:300px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    </div>
 
     <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin-bottom:20px;">
         <div style="margin-bottom:15px;">
@@ -519,8 +583,14 @@
     box-shadow:0 4px 20px rgba(0,0,0,0.3);
     z-index:1000;
     min-width:380px;
+    max-width:500px;
 ">
     <h2 style="margin:0 0 20px 0; color:#fd7e14; text-align:center;">🍽️ 出去吃这个！</h2>
+
+    <!-- 食物圖片 -->
+    <div id="cruiseFoodImageContainer" style="text-align:center; margin-bottom:20px; display:none;">
+        <img id="cruiseFoodImage" src="" alt="食物圖片" style="width:100%; max-width:300px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    </div>
 
     <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin-bottom:20px;">
         <div style="margin-bottom:15px;">
@@ -594,6 +664,10 @@
                     <span id="foodSituation1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
             </div>
+
+            <!-- 食物圖片 -->            <div id="dailyImageContainer1" style="text-align:center; margin-top:15px; display:none;">
+                <img id="dailyFoodImage1" src="" alt="食物圖片" style="width:100%; max-width:300px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            </div>
         </div>
 
         <!-- 素菜 -->
@@ -616,6 +690,11 @@
                     <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">📍 场景：</span>
                     <span id="foodSituation2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
+            </div>
+
+            <!-- 食物圖片 -->
+            <div id="dailyImageContainer2" style="text-align:center; margin-top:15px; display:none;">
+                <img id="dailyFoodImage2" src="" alt="食物圖片" style="width:100%; max-width:300px; height:auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
             </div>
         </div>
     </div>
@@ -640,8 +719,26 @@
 <script>
 function showModal() {
     console.log('showModal 被调用');
+    // 檢查是否登錄
+    if (!isLogin) {
+        alert('請先登錄才能添加食物到你的專屬美食庫！');
+        showLogin();
+        return;
+    }
     document.getElementById("modal").style.display = "block";
     document.getElementById("overlay").style.display = "block";
+}
+
+function showLogin() {
+    console.log('showLogin 被调用');
+    document.getElementById("login").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function logout() {
+    if (confirm('確定要登出嗎？')) {
+        window.location.href = 'user?action=logout';
+    }
 }
 
 function showMaterialInput() {
@@ -657,6 +754,100 @@ function showLogin() {
 function showSignup() {
     document.getElementById("signup").style.display = "block";
     document.getElementById("overlay").style.display = "block";
+    // 清空之前的消息
+    document.getElementById("signupMessage").style.display = "none";
+    document.getElementById("signupForm").reset();
+}
+
+function handleSignup(event) {
+    event.preventDefault(); // 阻止表單默認提交
+    console.log('[handleSignup] 函數被調用');
+
+    var useridCreate = document.getElementById("useridCreate").value;
+    var passwordCreate = document.getElementById("passwordCreate").value;
+    var passwordConfirm = document.getElementById("passwordConfirm").value;
+    var messageDiv = document.getElementById("signupMessage");
+
+    console.log('[handleSignup] 用戶名:', useridCreate);
+    console.log('[handleSignup] 密碼長度:', passwordCreate.length);
+
+    // 驗證密碼是否一致
+    if (passwordCreate !== passwordConfirm) {
+        messageDiv.style.display = "block";
+        messageDiv.style.background = "#ffebee";
+        messageDiv.style.color = "#c62828";
+        messageDiv.textContent = "兩次輸入的密碼不一致！";
+        return false;
+    }
+
+    // 發送 AJAX 請求（使用 URLSearchParams 代替 FormData）
+    var params = new URLSearchParams();
+    params.append("action", "signup");
+    params.append("useridCreate", useridCreate);
+    params.append("passwordCreate", passwordCreate);
+    params.append("passwordConfirm", passwordConfirm);
+
+    console.log('[handleSignup] URLSearchParams 已創建');
+    // 打印參數內容
+    for (var pair of params.entries()) {
+        console.log('[handleSignup] Param:', pair[0] + ' = ' + pair[1]);
+    }
+
+    fetch('user', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: params.toString()
+    })
+    .then(function(response) {
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        if (!response.ok) {
+            throw new Error('HTTP error! status: ' + response.status);
+        }
+        return response.text(); // 先獲取文本
+    })
+    .then(function(text) {
+        console.log('Response text:', text);
+        try {
+            return JSON.parse(text); // 嘗試解析 JSON
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            console.error('Response was:', text);
+            throw new Error('無效的 JSON 響應');
+        }
+    })
+    .then(function(data) {
+        console.log('Parsed data:', data);
+        if (data.success) {
+            // 註冊成功，顯示提示信息
+            messageDiv.style.display = "block";
+            messageDiv.style.background = "#e8f5e9";
+            messageDiv.style.color = "#2e7d32";
+            messageDiv.textContent = "註冊成功！正在自動登錄...";
+
+            // 1.5秒後刷新頁面，顯示已登錄狀態
+            setTimeout(function() {
+                window.location.reload();
+            }, 1500);
+        } else {
+            // 註冊失敗
+            messageDiv.style.display = "block";
+            messageDiv.style.background = "#ffebee";
+            messageDiv.style.color = "#c62828";
+            messageDiv.textContent = data.message || data.error || "註冊失敗";
+        }
+    })
+    .catch(function(error) {
+        messageDiv.style.display = "block";
+        messageDiv.style.background = "#ffebee";
+        messageDiv.style.color = "#c62828";
+        messageDiv.textContent = "錯誤: " + error.message;
+        console.error('Error:', error);
+    });
+
+    return false;
 }
 
 function dailyPick() {
@@ -731,6 +922,10 @@ function dailyPick() {
                 document.getElementById("foodMaterial2").textContent = data.materialVeg || '无';
                 document.getElementById("foodKind2").textContent = data.kindVeg || '无';
                 document.getElementById("foodSituation2").textContent = data.situationVeg || '无';
+
+                // 獲取食物圖片
+                fetchFoodImage(data.foodMeat, 'dailyFoodImage1', 'dailyImageContainer1');
+                fetchFoodImage(data.foodVeg, 'dailyFoodImage2', 'dailyImageContainer2');
             } else {
                 document.getElementById("foodName1").textContent = "获取失败";
                 document.getElementById("foodMaterial1").textContent = data.error || '未知错误';
@@ -744,6 +939,99 @@ function dailyPick() {
         document.getElementById("foodName1").textContent = "网络错误";
         document.getElementById("foodMaterial1").textContent = error.message;
     });
+}
+
+// 從 Pexels API 獲取食物圖片
+function fetchFoodImage(foodName, imageElementId, containerElementId) {
+    console.log('[Pexels] 開始搜索圖片:', foodName);
+
+    var container = document.getElementById(containerElementId);
+    var img = document.getElementById(imageElementId);
+
+    // 初始化：隱藏圖片容器，準備淡入動畫
+    if (img && container) {
+        container.style.display = 'none';
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.5s ease-in';
+    }
+
+    // Pexels API 憑證
+    var PEXELS_API_KEY = 'Ws1cbPmcx1tRk1dc01eCrufE5o0XJEnbJMnNHG6uiuPTPDwv3JaBnUPX';
+
+    // 構建搜索查詢（使用中文 "食物" 關鍵字以獲得更準確的中文食物圖片）
+    var searchQuery = encodeURIComponent(foodName + ' 食物');
+    var apiUrl = 'https://api.pexels.com/v1/search?query=' + searchQuery + '&per_page=1&orientation=landscape&locale=zh-TW';
+
+    // 嘗試從 Pexels 獲取圖片
+    fetch(apiUrl, {
+        headers: {
+            'Authorization': PEXELS_API_KEY
+        }
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('API 請求失敗: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('[Pexels] API 響應:', data);
+
+            if (data.photos && data.photos.length > 0 && img) {
+                // 找到匹配的圖片，使用 medium 尺寸
+                var imageUrl = data.photos[0].src.medium;
+                console.log('[Pexels] 找到圖片:', imageUrl);
+
+                // 設置圖片源，等待加載完成
+                img.src = imageUrl;
+                img.alt = foodName;
+
+                // 圖片加載完成後，淡入顯示
+                img.onload = function() {
+                    container.style.display = 'block';
+                    setTimeout(function() {
+                        img.style.opacity = '1';
+                    }, 10);
+                };
+
+                // 處理圖片加載失敗的情況
+                img.onerror = function() {
+                    console.log('[Pexels] 圖片加載失敗，使用默認圖片');
+                    img.src = 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png';
+                    img.alt = '食物圖片';
+                    container.style.display = 'block';
+                    setTimeout(function() {
+                        img.style.opacity = '1';
+                    }, 10);
+                };
+            } else {
+                console.log('[Pexels] 未找到匹配的食物圖片，使用默認圖片');
+                if (img) {
+                    img.src = 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png';
+                    img.alt = '食物圖片';
+                    img.onload = function() {
+                        container.style.display = 'block';
+                        setTimeout(function() {
+                            img.style.opacity = '1';
+                        }, 10);
+                    };
+                }
+            }
+        })
+        .catch(function(error) {
+            console.log('[Pexels] 獲取圖片失敗，使用默認圖片:', error.message);
+            // 顯示默認圖片
+            if (img) {
+                img.src = 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png';
+                img.alt = '食物圖片';
+                img.onload = function() {
+                    container.style.display = 'block';
+                    setTimeout(function() {
+                        img.style.opacity = '1';
+                    }, 10);
+                };
+            }
+        });
 }
 
 function randomPick() {
@@ -798,10 +1086,14 @@ function randomPick() {
             foodName.classList.remove("rolling-animation");
 
             if (data.success) {
-                document.getElementById("foodName").textContent = data.food || '未知';
+                var foodNameText = data.food || '未知';
+                document.getElementById("foodName").textContent = foodNameText;
                 document.getElementById("foodMaterial").textContent = data.material || '无';
                 document.getElementById("foodKind").textContent = data.kind || '无';
                 document.getElementById("foodSituation").textContent = data.situation || '无';
+
+                // 獲取食物圖片
+                fetchFoodImage(foodNameText, 'foodImage', 'foodImageContainer');
             } else {
                 document.getElementById("foodName").textContent = "获取失败";
                 document.getElementById("foodMaterial").textContent = data.error || '未知错误';
@@ -868,10 +1160,14 @@ function cruisePick() {
             foodName.classList.remove("rolling-animation");
 
             if (data.success) {
-                document.getElementById("cruiseFoodName").textContent = data.food || '未知';
+                var foodNameText = data.food || '未知';
+                document.getElementById("cruiseFoodName").textContent = foodNameText;
                 document.getElementById("cruiseFoodMaterial").textContent = data.material || '无';
                 document.getElementById("cruiseFoodKind").textContent = data.kind || '无';
                 document.getElementById("cruiseFoodSituation").textContent = data.situation || '无';
+
+                // 獲取食物圖片
+                fetchFoodImage(foodNameText, 'cruiseFoodImage', 'cruiseFoodImageContainer');
             } else {
                 document.getElementById("cruiseFoodName").textContent = "获取失败";
                 document.getElementById("cruiseFoodMaterial").textContent = data.error || '未知错误';
@@ -959,10 +1255,14 @@ function materialPick() {
             foodName.classList.remove("rolling-animation");
 
             if (data.success) {
-                document.getElementById("materialFoodName").textContent = data.food || '未知';
+                var foodNameText = data.food || '未知';
+                document.getElementById("materialFoodName").textContent = foodNameText;
                 document.getElementById("materialFoodMaterial").textContent = data.material || '无';
                 document.getElementById("materialFoodKind").textContent = data.kind || '无';
                 document.getElementById("materialFoodSituation").textContent = data.situation || '无';
+
+                // 獲取食物圖片
+                fetchFoodImage(foodNameText, 'materialFoodImage', 'materialFoodImageContainer');
             } else {
                 document.getElementById("materialFoodName").textContent = "获取失败";
                 document.getElementById("materialFoodMaterial").textContent = data.error || '未知错误';
@@ -1065,24 +1365,12 @@ function confirmDailyChoice() {
 }
 var isLogin = <%= (loginUser != null) %>;
 
-
+// 移除自動彈出登錄窗口的邏輯
 window.onload = function() {
-    <% if(loginUser == null){ %>
-        document.getElementById("login").style.display = "block";
-        document.getElementById("overlay").style.display = "block";
-    <% } else { %>
-        document.getElementById("login").style.display = "none";
-        document.getElementById("overlay").style.display = "none";
-    <% } %>
+    // 確保登錄窗口和遮罩層默認隱藏
+    document.getElementById("login").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
 }
-
-
-
-<% if(loginUser != null){ %>
-    欢迎，<%= loginUser.getUserId() %>
-
-<% } %>
-
 
 console.log('JavaScript 已加载');
 </script>
