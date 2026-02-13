@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"  import="data.User"%>
+    
+<%
+    User loginUser = (User) session.getAttribute("loginUser");
+%>
+
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -140,6 +146,34 @@
         transform: translateY(0);
     }
 
+    /* 登錄按钮 */
+    .login{
+        width: clamp(110px, 30vw, 120px);
+        height: clamp(40px, 12vw, 45px);
+        border-radius: 25px;
+        background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+        color: white;
+        font-size: clamp(14px, 4vw, 16px);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        position: fixed;
+        top: 20px;
+        right: 20px;
+    }
+
+    .login:hover {
+        background: linear-gradient(135deg, #218838 0%, #28a745 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .login:active {
+        transform: translateY(0);
+    }
+
+
     /* 滚动动画效果 */
     @keyframes rolling {
         0% {
@@ -202,6 +236,9 @@
 
     <!-- 添加食物按钮 -->
     <button class="btn-add" onclick="showModal()">+ 添加食物</button>
+    
+     <!-- 登錄按钮 -->
+    <button class="login" onclick="showLogin()">登錄</button>
 </div>
 
 <!-- 添加食物弹窗 -->
@@ -257,6 +294,90 @@
         </div>
     </form>
 </div>
+
+<!--登錄弹窗 -->
+<div id="login" style="
+    display:none;
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:#fff;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    z-index:1000;
+    min-width:350px;
+">
+    <h3 style="margin-top:0; color:#333;">登錄你的美食庫</h3>
+
+    <form method="post" action="user">
+        <input type="hidden" name="action" value="login">
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#666;">用戶名：</label>
+            <input type="text" name="userid" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#666;">密碼：</label>
+            <input type="text" name="password" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+
+       
+
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button type="submit" style="padding:10px 30px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">确定</button>
+            <button type="button" onclick="closeAllModals()" style="padding:10px 30px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer;">取消</button>
+             <button type="button" onclick="showSignup()" style="padding:10px 30px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer;">注冊</button>
+        </div>
+    </form>
+</div>
+
+<!--注冊弹窗 -->
+<div id="signup" style="
+    display:none;
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:#fff;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    z-index:1000;
+    min-width:350px;
+">
+    <h3 style="margin-top:0; color:#333;">創建你的賬戶</h3>
+
+    <form method="post" action="user>
+        <input type="hidden" name="action" value="signup">
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#666;">用戶名：</label>
+            <input type="text" name="useridCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#666;">密碼：</label>
+            <input type="text" name="passwordCreate" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+        
+                <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#666;">確認密碼：</label>
+            <input type="text" name="passwordComfirm" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box;">
+        </div>
+
+       
+
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button type="submit" style="padding:10px 30px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">提交</button>
+            <button type="button" onclick="closeAllModals()" style="padding:10px 30px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer;">取消</button>
+             
+        </div>
+    </form>
+</div>
+
 
 <!-- 食材搜索弹窗 -->
 <div id="materialInput" style="
@@ -525,6 +646,16 @@ function showModal() {
 
 function showMaterialInput() {
     document.getElementById("materialInput").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function showLogin() {
+    document.getElementById("login").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function showSignup() {
+    document.getElementById("signup").style.display = "block";
     document.getElementById("overlay").style.display = "block";
 }
 
@@ -892,6 +1023,8 @@ function closeAllModals() {
     document.getElementById("materialInput").style.display = "none";
     document.getElementById("materialResult").style.display = "none";
     document.getElementById("overlay").style.display = "none";
+    document.getElementById("login").style.display = "none";
+    document.getElementById("signup").style.display = "none";
 }
 
 function confirmChoice() {
@@ -930,6 +1063,26 @@ function confirmDailyChoice() {
     }
     closeDailyResultModal();
 }
+var isLogin = <%= (loginUser != null) %>;
+
+
+window.onload = function() {
+    <% if(loginUser == null){ %>
+        document.getElementById("login").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    <% } else { %>
+        document.getElementById("login").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    <% } %>
+}
+
+
+
+<% if(loginUser != null){ %>
+    欢迎，<%= loginUser.getUserId() %>
+
+<% } %>
+
 
 console.log('JavaScript 已加载');
 </script>
