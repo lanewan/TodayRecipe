@@ -651,17 +651,9 @@
                 <div style="font-size:clamp(16px, 4.5vw, 20px); font-weight:bold; color:#333; margin-top:5px;" id="foodName1">加载中...</div>
             </div>
             <div style="border-top:1px solid #ffe0e0; padding-top:15px;">
-                <div style="margin-bottom:8px;">
+                <div>
                     <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🥘 食材：</span>
                     <span id="foodMaterial1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
-                </div>
-                <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🍖 类型：</span>
-                    <span id="foodKind1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
-                </div>
-                <div>
-                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">📍 场景：</span>
-                    <span id="foodSituation1" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
             </div>
 
@@ -678,17 +670,9 @@
                 <div style="font-size:clamp(16px, 4.5vw, 20px); font-weight:bold; color:#333; margin-top:5px;" id="foodName2">加载中...</div>
             </div>
             <div style="border-top:1px solid #d1fae5; padding-top:15px;">
-                <div style="margin-bottom:8px;">
+                <div>
                     <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🥘 食材：</span>
                     <span id="foodMaterial2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
-                </div>
-                <div style="margin-bottom:8px;">
-                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">🍖 类型：</span>
-                    <span id="foodKind2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
-                </div>
-                <div>
-                    <span style="color:#666; font-size:clamp(11px, 3vw, 13px);">📍 场景：</span>
-                    <span id="foodSituation2" style="color:#333; font-size:clamp(11px, 3vw, 13px);">-</span>
                 </div>
             </div>
 
