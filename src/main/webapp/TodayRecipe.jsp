@@ -858,16 +858,12 @@ function dailyPick() {
     setTimeout(function() { foodName1.classList.add("rolling-animation"); }, 10);
 
     document.getElementById("foodMaterial1").textContent = "-";
-    document.getElementById("foodKind1").textContent = "-";
-    document.getElementById("foodSituation1").textContent = "-";
 
     foodName2.textContent = "加载中...";
     foodName2.classList.remove("rolling-animation");
     setTimeout(function() { foodName2.classList.add("rolling-animation"); }, 10);
 
     document.getElementById("foodMaterial2").textContent = "-";
-    document.getElementById("foodKind2").textContent = "-";
-    document.getElementById("foodSituation2").textContent = "-";
 
     console.log('开始 fetch 请求');
 
@@ -899,13 +895,9 @@ function dailyPick() {
             if (data.success) {
                 document.getElementById("foodName1").textContent = data.foodMeat || '未知';
                 document.getElementById("foodMaterial1").textContent = data.materialMeat || '无';
-                document.getElementById("foodKind1").textContent = data.kindMeat || '无';
-                document.getElementById("foodSituation1").textContent = data.situationMeat || '无';
 
                 document.getElementById("foodName2").textContent = data.foodVeg || '未知';
                 document.getElementById("foodMaterial2").textContent = data.materialVeg || '无';
-                document.getElementById("foodKind2").textContent = data.kindVeg || '无';
-                document.getElementById("foodSituation2").textContent = data.situationVeg || '无';
 
                 // 獲取食物圖片
                 fetchFoodImage(data.foodMeat, 'dailyFoodImage1', 'dailyImageContainer1');
