@@ -25,14 +25,59 @@
         justify-content: center;
     }
 
+    /* 標題容器 */
+    .title-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
     /* 標題 */
     .page-title {
         font-size: clamp(32px, 8vw, 48px);
         font-weight: bold;
         color: #333;
-        margin: 20px 0;
+        margin: 0;
         text-align: center;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 滾動食物 emoji 容器 */
+    .food-emoji-scroll {
+        font-size: clamp(24px, 6vw, 36px);
+        width: clamp(40px, 10vw, 60px);
+        height: clamp(40px, 10vw, 60px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* 滾動動畫 */
+    .food-emoji-scroll span {
+        position: absolute;
+        animation: scrollUp 2s ease-in-out infinite;
+        opacity: 0;
+    }
+
+    @keyframes scrollUp {
+        0% {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
     }
 
     .container {
@@ -146,6 +191,31 @@
         transform: translateY(0);
     }
 
+    /* 管理食物按钮 */
+    .btn-manage {
+        width: clamp(140px, 38vw, 160px);
+        height: clamp(40px, 12vw, 45px);
+        border-radius: 25px;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        font-size: clamp(14px, 4vw, 16px);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        margin-top: 10px;
+    }
+
+    .btn-manage:hover {
+        background: linear-gradient(135deg, #5f4dd1 0%, #8b7fe6 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+    }
+
+    .btn-manage:active {
+        transform: translateY(0);
+    }
+
     /* 登錄按钮 */
     .login{
         width: clamp(110px, 30vw, 120px);
@@ -218,6 +288,30 @@
         animation: fadeIn 0.3s ease-out;
     }
 
+    /* 點擊彈出的食物 emoji */
+    .click-emoji {
+        position: fixed;
+        font-size: 24px;
+        pointer-events: none;
+        z-index: 9999;
+        animation: emojiPopOut 1s ease-out forwards;
+    }
+
+    @keyframes emojiPopOut {
+        0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        30% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(-50%, -80%) scale(0.8);
+        }
+    }
+
     /* 用戶歡迎信息 */
     .user-welcome {
         position: fixed;
@@ -269,21 +363,31 @@
     </div>
 <% } %>
 
-<h1 class="page-title">今天吃什麽</h1>
+<div class="title-container">
+    <h1 class="page-title">今天吃什麽</h1>
+    <div class="food-emoji-scroll" id="foodEmojiScroll">
+        <span>🍗</span>
+    </div>
+</div>
 
 <div class="container">
     <!-- 主按钮 -->
-    <button class="btn-main" onclick="randomPick()">听天由命</button>
+    <button class="btn-main" onclick="randomPick()">听天由命<br>🙏</button>
 
     <!-- 三个功能按钮 -->
     <div class="secondary-buttons">
-        <button class="btn-health" onclick="dailyPick()">健康</button>
-        <button class="btn-dining" onclick="cruisePick()">外食</button>
-        <button class="btn-material" onclick="showMaterialInput()">想吃○○！</button>
+        <button class="btn-health" onclick="dailyPick()">健康 🏃</button>
+        <button class="btn-dining" onclick="cruisePick()">外食 🍴</button>
+        <button class="btn-material" onclick="showMaterialInput()">想吃○○！🤤</button>
     </div>
 
     <!-- 添加食物按钮 -->
     <button class="btn-add" onclick="showModal()">+ 添加食物</button>
+
+    <!-- 管理食物按钮（仅登录用户可见） -->
+    <% if(loginUser != null){ %>
+        <button class="btn-manage" onclick="location.href='ManageFood.jsp'">📋 管理我的食物</button>
+    <% } %>
 
     <!-- 登錄按钮 -->
     <% if(loginUser == null){ %>
@@ -1340,6 +1444,68 @@ function confirmDailyChoice() {
     closeDailyResultModal();
 }
 var isLogin = <%= (loginUser != null) %>;
+
+// 食物 emoji 滾動效果
+var foodEmojis = ['🍗', '🥩', '🥬', '🍅', '🥕', '🍆', '🌽', '🥔', '🍄', '🥦', '🍖', '🍤', '🐟', '🦐', '🥓'];
+var currentEmojiIndex = 0;
+
+function updateFoodEmoji() {
+    var container = document.getElementById('foodEmojiScroll');
+    if (container) {
+        var currentEmoji = container.querySelector('span');
+        if (currentEmoji) {
+            currentEmoji.remove();
+        }
+
+        currentEmojiIndex = (currentEmojiIndex + 1) % foodEmojis.length;
+        var newEmoji = document.createElement('span');
+        newEmoji.textContent = foodEmojis[currentEmojiIndex];
+        container.appendChild(newEmoji);
+    }
+}
+
+// 每2秒切換一個食物 emoji
+setInterval(updateFoodEmoji, 2000);
+
+// 點擊彈出隨機食物 emoji
+var clickFoodEmojis = ['🍗', '🥩', '🥬', '🍅', '🥕', '🍆', '🌽', '🥔', '🍄', '🥦', '🍖', '🍤', '🐟', '🦐', '🥓', '🍕', '🍔', '🍟', '🌭', '🥪', '🌮', '🌯', '🥙', '🍝', '🍜', '🍲', '🍱', '🍛', '🍣', '🍤'];
+
+function createClickEmoji(x, y) {
+    // 隨機選擇一個食物 emoji
+    var randomEmoji = clickFoodEmojis[Math.floor(Math.random() * clickFoodEmojis.length)];
+
+    // 創建 emoji 元素
+    var emojiElement = document.createElement('div');
+    emojiElement.className = 'click-emoji';
+    emojiElement.textContent = randomEmoji;
+    emojiElement.style.left = x + 'px';
+    emojiElement.style.top = y + 'px';
+
+    // 添加到頁面
+    document.body.appendChild(emojiElement);
+
+    // 1秒後移除
+    setTimeout(function() {
+        emojiElement.remove();
+    }, 1000);
+}
+
+// 監聽頁面點擊事件
+document.addEventListener('click', function(event) {
+    // 檢查點擊的是否是按鈕或其他交互元素
+    var target = event.target;
+    var isButton = target.tagName === 'BUTTON' ||
+                   target.tagName === 'A' ||
+                   target.tagName === 'INPUT' ||
+                   target.tagName === 'SELECT' ||
+                   target.closest('button') !== null ||
+                   target.closest('a') !== null;
+
+    // 如果不是按鈕，則創建 emoji
+    if (!isButton) {
+        createClickEmoji(event.clientX, event.clientY);
+    }
+});
 
 // 移除自動彈出登錄窗口的邏輯
 window.onload = function() {
