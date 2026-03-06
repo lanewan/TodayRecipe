@@ -45,6 +45,10 @@ public class FoodServlet extends HttpServlet {
 		if ("materialPick".equals(action)) {
 			materialPick(req, resp);
 		}
+
+		if ("delete".equals(action)) {
+			deleteFood(req, resp);
+		}
 	}
 
 	private void addFood(HttpServletRequest req, HttpServletResponse resp)
@@ -102,6 +106,19 @@ public class FoodServlet extends HttpServlet {
 				System.err.println("ERROR: randomPick() 返回了 null");
 				resp.getWriter().write("{\"success\":false, \"error\":\"未找到食品\"}");
 				return;
+			}
+
+			// ✅ 记录历史（仅登录用户）
+			if (userid != null) {
+				try {
+					Data dt = new Data();
+					dt.addHistory(userid, Integer.parseInt(stock.getNumber()));
+					dt.close();
+					System.out.println("[FoodServlet] 历史记录已保存");
+				} catch (Exception e) {
+					System.err.println("[FoodServlet] 保存历史记录失败: " + e.getMessage());
+					// 不影响主流程，继续返回结果
+				}
 			}
 
 			// ✅ 获取所有字段
@@ -360,6 +377,44 @@ public class FoodServlet extends HttpServlet {
 				.replace("\"", "\\\"")
 				.replace("\n", "\\n")
 				.replace("\r", "\\r");
+	}
+
+	// 删除食物
+	private void deleteFood(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+
+		resp.setContentType("application/json;charset=UTF-8");
+
+		String foodNoStr = req.getParameter("foodNo");
+
+		// 從 session 中獲取當前登錄用戶
+		HttpSession session = req.getSession();
+		User loginUser = (User) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			resp.getWriter().write("{\"success\":false, \"error\":\"請先登錄\"}");
+			return;
+		}
+
+		String userid = loginUser.getUserId();
+
+		try {
+			int foodNo = Integer.parseInt(foodNoStr);
+			Data service = new Data();
+
+			boolean success = service.deleteFood(foodNo, userid);
+			service.close();
+
+			if (success) {
+				resp.getWriter().write("{\"success\":true}");
+			} else {
+				resp.getWriter().write("{\"success\":false, \"error\":\"删除失败或无权限\"}");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			String errorMsg = e.getMessage() != null ? e.getMessage() : "删除失败";
+			resp.getWriter().write("{\"success\":false, \"error\":\"" + escapeJson(errorMsg) + "\"}");
+		}
 	}
 
 }

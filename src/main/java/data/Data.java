@@ -270,4 +270,97 @@ public class Data implements AutoCloseable {
 			throw e;
 		}
 	}
+
+	// 添加历史记录
+	public void addHistory(String userid, int foodNo) throws Exception {
+		String sql = "INSERT INTO history (userid, food_no, pick_time) VALUES (?, ?, NOW())";
+
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+			pstmt.setString(1, userid);
+			pstmt.setInt(2, foodNo);
+			pstmt.executeUpdate();
+			System.out.println("[Data] 添加历史记录成功: 用户 " + userid + ", 食物编号 " + foodNo);
+		} catch (Exception e) {
+			System.err.println("[Data] 添加历史记录失败: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	// 获取用户最近选择的食物编号（最近一次）
+	public Integer getLastPickedFoodNo(String userid) throws Exception {
+		if (userid == null) {
+			return null; // 访客模式不记录历史
+		}
+
+		String sql = "SELECT food_no FROM history WHERE userid = ? ORDER BY pick_time DESC LIMIT 1";
+
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+			pstmt.setString(1, userid);
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				int foodNo = rs.getInt("food_no");
+				System.out.println("[Data] 用户 " + userid + " 最近选择的食物编号: " + foodNo);
+				return foodNo;
+			}
+			rs.close();
+		} catch (Exception e) {
+			System.err.println("[Data] 查询历史记录失败: " + e.getMessage());
+			// 不抛出异常，返回 null 表示没有历史记录
+		}
+
+		return null;
+	}
+
+	// 删除食物
+	public boolean deleteFood(int foodNo, String userid) throws Exception {
+		String sql = "DELETE FROM recipe WHERE no = ? AND userid = ?";
+
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+			pstmt.setInt(1, foodNo);
+			pstmt.setString(2, userid);
+
+			int rowsAffected = pstmt.executeUpdate();
+
+			if (rowsAffected > 0) {
+				System.out.println("[Data] 删除食物成功: 编号 " + foodNo);
+				return true;
+			} else {
+				System.err.println("[Data] 删除食物失败: 未找到或无权限");
+				return false;
+			}
+		} catch (Exception e) {
+			System.err.println("[Data] 删除食物失败: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	// 查询用户的所有食物（用于管理页面）
+	public List<Stock> getUserFoods(String userid) throws Exception {
+		List<Stock> rows = new ArrayList<>();
+		String sql = "SELECT no, name, material, kind, situation FROM recipe WHERE userid = ? ORDER BY no DESC";
+
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+			pstmt.setString(1, userid);
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Stock obj = new Stock();
+				obj.setNumber(String.valueOf(rs.getInt("no")));
+				obj.setName(rs.getString("name"));
+				obj.setMaterial(rs.getString("material"));
+				obj.setKind(rs.getString("kind"));
+				obj.setSituation(rs.getString("situation"));
+				rows.add(obj);
+			}
+
+			rs.close();
+			System.out.println("[Data] 查询到用户 " + userid + " 的 " + rows.size() + " 条食物数据");
+		} catch (Exception e) {
+			System.err.println("[Data] 查询用户食物失败: " + e.getMessage());
+			throw e;
+		}
+
+		return rows;
+	}
 }

@@ -30,6 +30,20 @@ public class Pick {
 				throw new Exception("没有找到该用户的食品数据");
 			}
 
+			// 获取最近选择的食物编号
+			Integer lastPickedNo = dt.getLastPickedFoodNo(userid);
+
+			// 如果有历史记录且食物数量大于1，则排除最近选择的食物
+			if (lastPickedNo != null && all.size() > 1) {
+				System.out.println("[Pick] 排除最近选择的食物编号: " + lastPickedNo);
+				all.removeIf(stock -> stock.getNumber().equals(String.valueOf(lastPickedNo)));
+				System.out.println("[Pick] 排除后剩余 " + all.size() + " 条数据");
+			}
+
+			if (all.isEmpty()) {
+				throw new Exception("没有可选择的食品数据");
+			}
+
 			Random random = new Random();
 			int index = random.nextInt(all.size());
 			Stock result = all.get(index);
