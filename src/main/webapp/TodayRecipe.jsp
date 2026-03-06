@@ -102,6 +102,8 @@
         transition: all 0.3s ease;
         animation: bounce 2s ease-in-out infinite;
         margin-bottom: 30px;
+        position: relative;
+        overflow: visible;
     }
 
     .btn-main:hover {
@@ -111,6 +113,95 @@
 
     .btn-main:active {
         transform: scale(0.95);
+    }
+
+    /* 祈祷 emoji 动画容器 */
+    .pray-animation {
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: clamp(28px, 7vw, 36px);
+        width: 100%;
+        height: clamp(35px, 9vw, 45px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pray-animation .hand {
+        position: absolute;
+        animation: handClap 3s ease-in-out infinite;
+    }
+
+    .pray-animation .hand-left {
+        animation: handClapLeft 3s ease-in-out infinite;
+    }
+
+    .pray-animation .hand-right {
+        animation: handClapRight 3s ease-in-out infinite;
+    }
+
+    .pray-animation .pray-emoji {
+        opacity: 0;
+        animation: prayAppear 3s ease-in-out infinite;
+    }
+
+    @keyframes handClapLeft {
+        0%, 100% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 1;
+        }
+        30% {
+            transform: translateX(-30px) rotate(-15deg);
+            opacity: 1;
+        }
+        40% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 0;
+        }
+        60%, 90% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes handClapRight {
+        0%, 100% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 1;
+        }
+        30% {
+            transform: translateX(30px) rotate(15deg);
+            opacity: 1;
+        }
+        40% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 0;
+        }
+        60%, 90% {
+            transform: translateX(0) rotate(0deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes prayAppear {
+        0%, 35% {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        45% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        50%, 90% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: scale(0.5);
+        }
     }
 
     @keyframes bounce {
@@ -326,6 +417,38 @@
         z-index: 100;
     }
 
+    /* 挥手动画 */
+    .wave-hand {
+        display: inline-block;
+        animation: waveAnimation 2s ease-in-out infinite;
+        transform-origin: 70% 70%;
+    }
+
+    @keyframes waveAnimation {
+        0%, 100% {
+            transform: rotate(0deg);
+        }
+        5% {
+            transform: rotate(14deg);
+        }
+        10% {
+            transform: rotate(-8deg);
+        }
+        15% {
+            transform: rotate(14deg);
+        }
+        20% {
+            transform: rotate(-4deg);
+        }
+        25% {
+            transform: rotate(10deg);
+        }
+        30% {
+            transform: rotate(0deg);
+        }
+        /* 30%-100% 保持静止 */
+    }
+
     /* 登錄按鈕樣式 */
     .btn-login {
         width: clamp(80px, 22vw, 100px);
@@ -352,7 +475,7 @@
 <!-- 用戶歡迎信息 -->
 <% if(loginUser != null){ %>
     <div class="user-welcome">
-        歡迎，<%= loginUser.getUserId() %> 👋
+        歡迎，<%= loginUser.getUserId() %> <span class="wave-hand">👋</span>
         <button onclick="logout()" style="margin-left:10px; padding:5px 15px; background:#ff6b6b; color:white; border:none; border-radius:15px; cursor:pointer; font-size:clamp(12px, 3vw, 14px);">登出</button>
     </div>
 <% } else { %>
@@ -372,7 +495,14 @@
 
 <div class="container">
     <!-- 主按钮 -->
-    <button class="btn-main" onclick="randomPick()">听天由命<br>🙏</button>
+    <button class="btn-main" onclick="randomPick()">
+        听天由命
+        <div class="pray-animation">
+            <span class="hand hand-left">👋</span>
+            <span class="hand hand-right">👋</span>
+            <span class="pray-emoji">🙏</span>
+        </div>
+    </button>
 
     <!-- 三个功能按钮 -->
     <div class="secondary-buttons">
